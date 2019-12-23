@@ -20,6 +20,16 @@ mod tests {
         }
     }
 
+    struct ErrWriter;
+    impl io::Write for ErrWriter {
+        fn write(&mut self, _: &[u8]) -> io::Result<usize> {
+            Err(io::Error::from(io::ErrorKind::Other))
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Err(io::Error::from(io::ErrorKind::Other))
+        }
+    }
+
     #[test]
     #[should_panic]
     fn empty_data() {
@@ -59,5 +69,12 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn writer_err() {
+        Chart::new()
+            .draw_into(ErrWriter, &[Default::default()])
+            .expect_err("expected `draw_into` to propagate io error");
     }
 }
