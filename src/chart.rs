@@ -1,6 +1,31 @@
 use crate::{utils, Data};
 use std::{convert::TryInto, io};
 
+/// The `Chart` struct contains the configuration for displaying some data.
+///
+/// By default, a chart has a radius of `9`, an aspect ratio of `2` and doesn't show its legend.
+/// # Example usage:
+/// ```rust
+/// use piechart::{Chart, Color, Data};
+///
+/// fn main() {
+///     let data = vec![
+///         Data { label: "dd1".into(), value: 4.0, color: Some(Color::Red), fill: '•' },
+///         Data { label: "dd2".into(), value: 2.0, color: Some(Color::Green), fill: '•' },
+///         Data { label: "dd3".into(), value: 2.6, color: Some(Color::Blue), fill: '•' },
+///     ];
+///
+///     Chart::new()
+///         .radius(9)
+///         .aspect_ratio(2)
+///         .legend(true)
+///         .draw(&data);
+/// }
+/// ```
+/// will result in
+///
+/// ![example image](https://raw.githubusercontent.com/jakobhellermann/piechart/master/examples/config.png)
+#[derive(Debug)]
 pub struct Chart {
     radius: u16,
     aspect_ratio: u16,
@@ -17,18 +42,34 @@ impl Default for Chart {
 }
 
 impl Chart {
+    /// Contructs a new chart initialized with its default values
     pub fn new() -> Self {
         Default::default()
     }
+    /// Sets the radius of the pie chart.
+    /// To choose which size fits the best, you can run a code snippet like this:
+    /// ```rust
+    /// # use piechart::Chart;
+    /// # let data = vec![Default::default()];
+    /// let mut chart = Chart::new();
+    /// for radius in 0..=12 {
+    ///     chart.radius(radius);
+    ///     chart.draw(&data);
+    /// }
+    /// ```
     pub fn radius(&mut self, radius: u16) -> &mut Self {
         self.radius = radius;
         self
     }
+    /// The aspect ratio controls how stretched or squished the circle is.
+    /// Since terminal columns are more tall than wide a ration of 2 or 3 is the best in most cases.
     pub fn aspect_ratio(&mut self, aspect_ratio: u16) -> &mut Self {
         assert!(aspect_ratio > 0, "aspect ratio has to be greater than zero");
         self.aspect_ratio = aspect_ratio;
         self
     }
+
+    /// Specifies whether the chart should render a legend with the labels and their percentages.
     pub fn legend(&mut self, legend: bool) -> &mut Self {
         self.legend = legend;
         self
@@ -36,11 +77,16 @@ impl Chart {
 }
 
 impl Chart {
+    /// Renders the chart and outputs it onto `stdout`.
+    /// The method panics in case of an error. If you want more fine-grained control about error recovery
+    /// and how the buffer the chart is rendered into the buffer, use [`Chart::draw_into`](struct.Chart.html#method.draw_into).
     pub fn draw(&self, data: &[Data]) {
         self.draw_into(io::stdout(), data)
             .expect("failed to write to stdout")
     }
 
+    /// Same as [`Chart::draw`](struct.Chart.html#method.draw), but you can supply your own `impl Write`
+    /// and you can handle errors gracefully.
     pub fn draw_into(&self, mut f: impl io::Write, data: &[Data]) -> io::Result<()> {
         assert!(!data.is_empty(), "chart data cannot be empty");
         let total: f32 = data.iter().map(|d| d.value).sum();

@@ -1,3 +1,17 @@
+#![warn(
+    nonstandard_style,
+    rust_2018_idioms,
+    future_incompatible,
+    missing_debug_implementations,
+    missing_docs
+)]
+
+//! `piechart` is a library for drawing fancy pie charts like the following in the terminal:
+//!
+//! ![example image](https://raw.githubusercontent.com/jakobhellermann/piechart/master/examples/config.png)
+//!
+//! For more information visit the docs for [`Chart`](struct.Chart.html).
+
 mod chart;
 mod data;
 mod utils;

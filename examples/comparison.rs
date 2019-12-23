@@ -8,9 +8,10 @@ fn main() {
         Data { label: "dd3".into(), value: 2.6, color: Some(Color::Blue), fill: '•' },
     ];
 
-    Chart::new()
-        .radius(9)
-        .aspect_ratio(2)
-        .legend(true)
-        .draw(&data);
+    let mut chart = Chart::new();
+
+    for a in 0..=12 {
+        chart.radius(a);
+        chart.draw(&data);
+    }
 }
