@@ -88,8 +88,12 @@ impl Chart {
     /// Same as [`Chart::draw`](struct.Chart.html#method.draw), but you can supply your own `impl Write`
     /// and you can handle errors gracefully.
     pub fn draw_into(&self, mut f: impl io::Write, data: &[Data]) -> io::Result<()> {
-        assert!(!data.is_empty(), "chart data cannot be empty");
         let total: f32 = data.iter().map(|d| d.value).sum();
+        assert!(!data.is_empty(), "chart data cannot be empty");
+        assert!(
+            total > 0.0,
+            "total of data values has to be greater than zero"
+        );
         let data_angles = utils::data_angles(total, data);
 
         let radius = self.radius as i32;

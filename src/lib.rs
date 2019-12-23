@@ -21,7 +21,7 @@ pub use data::Data;
 
 #[cfg(test)]
 mod tests {
-    use crate::Chart;
+    use crate::{Chart, Data};
     use std::io;
 
     struct NullWriter;
@@ -83,6 +83,14 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[should_panic]
+    #[test]
+    fn zero_total() {
+        #[rustfmt::skip]
+        let data = vec![Data { value: 0.0, ..Default::default() }; 2];
+        Chart::new().draw(&data)
     }
 
     #[test]
