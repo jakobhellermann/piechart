@@ -6,6 +6,7 @@ use std::{
     io::{self, Write},
 };
 
+#[derive(Clone)]
 pub struct Data {
     pub label: String,
     pub value: f32,
@@ -63,6 +64,7 @@ impl Chart {
     }
 
     pub fn draw_into(&self, f: impl io::Write, data: &[Data]) -> io::Result<()> {
+        assert!(!data.is_empty(), "chart data cannot be empty");
         let total: f32 = data.iter().map(|d| d.value).sum();
         let data_angles = utils::data_angles(total, data);
 
@@ -119,5 +121,66 @@ impl Chart {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct NullWriter;
+    impl io::Write for NullWriter {
+        fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+            Ok(buf.len())
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+
+    #[rustfmt::skip]
+    fn dummy_data() -> Data {
+        Data { label: "".into(), value: 1.0, color: None, fill: ' ' }
+    }
+
+    #[test]
+    #[should_panic]
+    fn empty_data() {
+        Chart::new().draw_into(NullWriter, &[]).unwrap();
+    }
+
+    #[test]
+    fn data_len() {
+        let chart = Chart::new();
+        for len in 1..=16 {
+            println!("{}", len);
+            let data = vec![dummy_data(); len];
+            chart.draw_into(NullWriter, &data).unwrap();
+        }
+    }
+
+    #[test]
+    fn very_much_data() {
+        let chart = Chart::new();
+        let data = vec![dummy_data(); 2048];
+        chart.draw_into(NullWriter, &data).unwrap();
+    }
+
+    #[test]
+    fn config_combinations() {
+        let mut chart = Chart::new();
+        for radius in 0..=5 {
+            chart.radius(radius);
+            for aspect_ratio in 1..=5 {
+                chart.aspect_ratio(aspect_ratio);
+                for legend in &[true, false] {
+                    chart.legend(*legend);
+                    for data_len in 1..=5 {
+                        let data = vec![dummy_data(); data_len];
+                        chart.draw_into(NullWriter, &data).unwrap();
+                    }
+                }
+            }
+        }
     }
 }
