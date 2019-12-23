@@ -1,3 +1,5 @@
+mod utils;
+
 pub use ansi_term::Color;
 use std::{
     convert::TryInto,
@@ -54,30 +56,6 @@ impl Chart {
     }
 }
 
-fn data_angles(total: f32, data: &[Data]) -> Vec<f32> {
-    let mut angle = 0.0;
-    data.iter()
-        .map(|d| d.value / total)
-        .map(|pct| {
-            let val = pct * 360.0;
-            angle += val;
-            angle
-        })
-        .collect()
-}
-
-fn calculate_width(radius: i32, y: i32, aspect_ratio: i32) -> i32 {
-    let val = radius.pow(2) - y.pow(2);
-    let width = ((val * aspect_ratio) as f32).sqrt().round() as i32;
-
-    // without this the circles have an ugly single dot on top and bottom.
-    if width == 0 && aspect_ratio > 1 {
-        radius / (aspect_ratio * 2)
-    } else {
-        width
-    }
-}
-
 impl Chart {
     pub fn draw(&self, data: &[Data]) {
         self.draw_into(io::stdout(), data)
@@ -86,7 +64,7 @@ impl Chart {
 
     pub fn draw_into(&self, f: impl io::Write, data: &[Data]) -> io::Result<()> {
         let total: f32 = data.iter().map(|d| d.value).sum();
-        let data_angles = data_angles(total, data);
+        let data_angles = utils::data_angles(total, data);
 
         let radius = self.radius as i32;
         let aspect_ratio = self.aspect_ratio as i32;
@@ -94,7 +72,7 @@ impl Chart {
         let center_x = (radius as f32 * (aspect_ratio as f32).sqrt()).round() as i32;
 
         let circle = (-radius..=radius).map(|y| {
-            let width = calculate_width(radius, y, aspect_ratio);
+            let width = utils::calculate_width(radius, y, aspect_ratio);
 
             let mut output = " ".repeat((center_x - width).try_into().unwrap());
 
