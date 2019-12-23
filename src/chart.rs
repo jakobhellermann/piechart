@@ -1,8 +1,5 @@
 use crate::{utils, Data};
-use std::{
-    convert::TryInto,
-    io::{self, Write},
-};
+use std::{convert::TryInto, io};
 
 pub struct Chart {
     radius: u16,
@@ -44,7 +41,7 @@ impl Chart {
             .expect("failed to write to stdout")
     }
 
-    pub fn draw_into(&self, f: impl io::Write, data: &[Data]) -> io::Result<()> {
+    pub fn draw_into(&self, mut f: impl io::Write, data: &[Data]) -> io::Result<()> {
         assert!(!data.is_empty(), "chart data cannot be empty");
         let total: f32 = data.iter().map(|d| d.value).sum();
         let data_angles = utils::data_angles(total, data);
@@ -96,9 +93,8 @@ impl Chart {
             output
         });
 
-        let mut buf = io::BufWriter::new(f);
         for line in circle {
-            writeln!(buf, "{}", line)?;
+            writeln!(&mut f, "{}", line)?;
         }
 
         Ok(())
