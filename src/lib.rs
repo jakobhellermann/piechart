@@ -1,3 +1,4 @@
+pub use ansi_term::Color;
 use std::{
     convert::TryInto,
     io::{self, Write},
@@ -6,7 +7,7 @@ use std::{
 pub struct Data {
     pub name: String,
     pub value: f32,
-    pub color: (),
+    pub color: Option<Color>,
     pub fill: char,
 }
 
@@ -18,7 +19,7 @@ pub struct Chart {
 impl Default for Chart {
     fn default() -> Self {
         Self {
-            radius: 10,
+            radius: 8,
             aspect_ratio: 2,
             legend: false,
         }
@@ -95,11 +96,14 @@ impl Chart {
 
                 let idx = data_angles
                     .iter()
-                    .position(|a| 360.0 / 2.0 - angle < *a)
+                    .position(|a| 360.0 / 2.0 - angle <= *a)
                     .unwrap();
-                let c = data[idx].fill;
+                let item = &data[idx];
 
-                output.push(c);
+                match item.color {
+                    None => output.push(item.fill),
+                    Some(c) => output.push_str(&c.paint(item.fill.to_string()).to_string()),
+                }
             });
 
             output
