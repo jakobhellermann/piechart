@@ -5,10 +5,19 @@ use std::{
 };
 
 pub struct Data {
-    pub name: String,
+    pub label: String,
     pub value: f32,
     pub color: Option<Color>,
     pub fill: char,
+}
+impl Data {
+    fn format_label(&self, total: f32) -> String {
+        let fill = match self.color {
+            Some(c) => c.paint(self.fill.to_string()).to_string(),
+            None => self.fill.to_string(),
+        };
+        format!("{} {} {:.2}%", fill, self.label, self.value / total * 100.0)
+    }
 }
 
 pub struct Chart {
@@ -87,8 +96,7 @@ impl Chart {
         let circle = (-radius..=radius).map(|y| {
             let width = calculate_width(radius, y, aspect_ratio);
 
-            let padding_len = center_x - width;
-            let mut output = " ".repeat(padding_len.try_into().unwrap());
+            let mut output = " ".repeat((center_x - width).try_into().unwrap());
 
             (-width..=width).for_each(|x| {
                 let (x, y) = (x as f32, y as f32);
@@ -105,6 +113,24 @@ impl Chart {
                     Some(c) => output.push_str(&c.paint(item.fill.to_string()).to_string()),
                 }
             });
+
+            if self.legend {
+                let label_padding = 2;
+
+                let padding = " ".repeat((center_x - width + label_padding).try_into().unwrap());
+                output.push_str(&padding);
+
+                let max_label_idx = (data.len() - 1) as i32;
+
+                let mut iter = (0..=max_label_idx)
+                    .map(|x| x * 2)
+                    .map(|x| x - max_label_idx);
+
+                if let Some(idx) = iter.position(|i| i == y) {
+                    let item = &data[idx];
+                    output.push_str(&item.format_label(total));
+                }
+            }
 
             output
         });
