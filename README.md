@@ -16,7 +16,7 @@ fn main() {
 
     Chart::new()
         .radius(9)
-        .aspect_ratio(2)
+        .aspect_ratio(3)
         .legend(true)
         .draw(&data);
 }

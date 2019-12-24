@@ -18,7 +18,7 @@ const LABEL_PADDING: usize = 2;
 ///
 /// Chart::new()
 ///     .radius(9)
-///     .aspect_ratio(2)
+///     .aspect_ratio(3)
 ///     .legend(true)
 ///     .draw(&data);
 /// ```
@@ -35,7 +35,7 @@ impl Default for Chart {
     fn default() -> Self {
         Self {
             radius: 8,
-            aspect_ratio: 2,
+            aspect_ratio: 3,
             legend: false,
         }
     }

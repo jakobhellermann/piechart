@@ -13,5 +13,6 @@ fn main() {
     for a in 0..=12 {
         chart.radius(a);
         chart.draw(&data);
+        println!();
     }
 }

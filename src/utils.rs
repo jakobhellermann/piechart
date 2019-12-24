@@ -16,11 +16,14 @@ pub fn calculate_width(radius: i32, y: i32, aspect_ratio: i32) -> i32 {
     let val = radius.pow(2) - y.pow(2);
     let width = ((val * aspect_ratio) as f32).sqrt().round() as i32;
 
-    // without this the circles have an ugly single dot on top and bottom.
-    if width == 0 && aspect_ratio > 1 {
-        radius / (aspect_ratio * 2)
-    } else {
-        width
+    // the next code applies to the first and last line of the circle.
+    // without it the circles have an ugly single dot on top and bottom.
+    // I just experimented until it looked alright for all combinations of radius and aspect_ratio
+    match (width, aspect_ratio) {
+        (0, 1) => width,
+        (0, 2) => radius / (aspect_ratio * 2),
+        (0, _) => radius / aspect_ratio,
+        _ => width,
     }
 }
 
