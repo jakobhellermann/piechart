@@ -28,9 +28,9 @@ will result in
 
 ## Credits
 
-Developer: Jakob Hellermann @jakobhellermann
+Developer: Jakob Hellermann
 
-The design and code is heaviliy inspired by [piotrmurach's](https://github.com/piotrmurach/tty-pie) ruby gem.
+The design and code is heaviliy inspired by [piotrmurach's ruby gem](https://github.com/piotrmurach/tty-pie).
 
 ## License
 
