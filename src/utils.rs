@@ -23,3 +23,9 @@ pub fn calculate_width(radius: i32, y: i32, aspect_ratio: i32) -> i32 {
         width
     }
 }
+
+pub fn calculate_center_x(radius: i32, aspect_ratio: i32) -> i32 {
+    let aspect_ratio_sqrt = (aspect_ratio as f32).sqrt();
+
+    (radius as f32 * aspect_ratio_sqrt).round() as i32
+}

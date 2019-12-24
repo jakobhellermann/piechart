@@ -1,5 +1,7 @@
 use crate::{utils, Data};
-use std::{convert::TryInto, io};
+use std::io;
+
+const LABEL_PADDING: usize = 2;
 
 /// The `Chart` struct contains the configuration for displaying some data.
 ///
@@ -85,6 +87,15 @@ impl Chart {
 
     /// Same as [`Chart::draw`](struct.Chart.html#method.draw), but you can supply your own `impl Write`
     /// and you can handle errors gracefully.
+    // it works like this:
+    //
+    // for each y from -radius to radius:
+    //   calculate the width of the circle at that height
+    //   write (center_x - width) padding spaces
+    //   for x from -width to width:
+    //     calculate the angle of the circle the point is in
+    //     depending on the angle, choose a datapoint
+    //     depending on that datapoint, print its fill symbol and color
     pub fn draw_into(&self, mut f: impl io::Write, data: &[Data]) -> io::Result<()> {
         let total: f32 = data.iter().map(|d| d.value).sum();
         assert!(!data.is_empty(), "chart data cannot be empty");
@@ -97,12 +108,13 @@ impl Chart {
         let radius = self.radius as i32;
         let aspect_ratio = self.aspect_ratio as i32;
 
-        let center_x = (radius as f32 * (aspect_ratio as f32).sqrt()).round() as i32;
+        let center_x = utils::calculate_center_x(radius, aspect_ratio);
 
         let circle = (-radius..=radius).map(|y| {
             let width = utils::calculate_width(radius, y, aspect_ratio);
+            let padding_len = (center_x - width) as usize;
 
-            let mut output = " ".repeat((center_x - width).try_into().unwrap());
+            let mut output = " ".repeat(padding_len);
 
             (-width..=width).for_each(|x| {
                 let (x, y) = (x as f32, y as f32);
@@ -111,7 +123,7 @@ impl Chart {
                 let idx = data_angles
                     .iter()
                     .position(|a| 360.0 / 2.0 - angle <= *a)
-                    .unwrap();
+                    .expect("no data item for given angle, should be impossible");
                 let item = &data[idx];
 
                 match item.color {
@@ -121,16 +133,13 @@ impl Chart {
             });
 
             if self.legend {
-                let label_padding = 2;
-
-                let padding = " ".repeat((center_x - width + label_padding).try_into().unwrap());
-                output.push_str(&padding);
+                output.push_str(&" ".repeat(padding_len + LABEL_PADDING));
 
                 let max_label_idx = (data.len() - 1) as i32;
 
                 let mut iter = (0..=max_label_idx)
-                    .map(|x| x * 2)
-                    .map(|x| x - max_label_idx);
+                    .map(|x| x * 2) // space between labels
+                    .map(|x| x - max_label_idx); // center at y=0
 
                 if let Some(idx) = iter.position(|i| i == y) {
                     let item = &data[idx];
