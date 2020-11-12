@@ -24,7 +24,7 @@ fn main() {
 
 will result in
 
-![example image](https://raw.githubusercontent.com/jakobhellermann/piechart/master/examples/config.png)
+![example image](https://raw.githubusercontent.com/jakobhellermann/piechart/main/examples/config.png)
 
 ## Credits
 
