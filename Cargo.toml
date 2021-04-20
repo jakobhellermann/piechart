@@ -1,12 +1,13 @@
 [package]
 name = "piechart"
-version = "0.1.2"
+version = "1.0.0"
 authors = ["Jakob Hellermann <jakob.hellermann@protonmail.com>"]
 edition = "2018"
 description = "a library for drawing fancy pie charts in the terminal"
 repository = "https://github.com/jakobhellermann/piechart"
 keywords = ["charts", "cli", "pie"]
 categories = ["command-line-interface", "visualization"]
+readme = "README.md"
 license = "MIT"
 
 [features]
