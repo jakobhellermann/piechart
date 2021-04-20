@@ -26,6 +26,18 @@ will result in
 
 ![example image](https://raw.githubusercontent.com/jakobhellermann/piechart/main/examples/config.png)
 
+## CLI Usage
+
+You can install a small command line tool using this library by running
+```sh
+cargo install piechart --features cli
+```
+
+
+```sh
+piechart --radius 5 A:2.0 B:3.0 'Red:4.0:italic magenta strike:ω' 'Blue:1.0:bold italic blue ul:u'
+```
+
 ## Credits
 
 Developer: Jakob Hellermann
