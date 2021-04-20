@@ -11,9 +11,9 @@ const LABEL_PADDING: usize = 2;
 /// use piechart::{Chart, Color, Data};
 ///
 /// let data = vec![
-///     Data { label: "Chocolate".into(), value: 4.0, color: Some(Color::Blue), fill: '•' },
-///     Data { label: "Strawberry".into(), value: 2.0, color: Some(Color::Red), fill: '▪' },
-///     Data { label: "Vanilla".into(), value: 2.6, color: Some(Color::Yellow), fill: '▴' },
+///     Data { label: "Chocolate".into(), value: 4.0, color: Some(Color::Blue.into()), fill: '•' },
+///     Data { label: "Strawberry".into(), value: 2.0, color: Some(Color::Red.into()), fill: '▪' },
+///     Data { label: "Vanilla".into(), value: 2.6, color: Some(Color::Yellow.into()), fill: '▴' },
 /// ];
 ///
 /// Chart::new()

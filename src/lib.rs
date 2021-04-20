@@ -15,7 +15,7 @@
 mod chart;
 mod data;
 mod utils;
-pub use ansi_term::Color;
+pub use ansi_term::{Color, Style};
 pub use chart::Chart;
 pub use data::Data;
 

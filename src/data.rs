@@ -1,4 +1,4 @@
-use crate::Color;
+use crate::Style;
 
 /// A data item is used to describe a datapoint that will be rendered in the [`Chart::draw`](struct.Chart.html#method.draw)-method.
 #[derive(Debug, Clone)]
@@ -8,7 +8,7 @@ pub struct Data {
     /// The value is an arbitrary datapoint and will be interpreted relative to the sum of values of the datapoints.
     pub value: f32,
     /// If `color` is specified each character will be prefixed with the ANSI escape code for its color.
-    pub color: Option<Color>,
+    pub color: Option<Style>,
     /// The `fill` char controls how the area in the pie chart will be rendered.
     pub fill: char,
 }
