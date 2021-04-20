@@ -29,6 +29,12 @@ impl Data {
             Some(c) => c.paint(self.fill.to_string()).to_string(),
             None => self.fill.to_string(),
         };
-        format!("{} {} {:.2}%", fill, self.label, self.value / total * 100.0)
+        format!(
+            "{} {} {:.2}% ({})",
+            fill,
+            self.label,
+            self.value / total * 100.0,
+            self.value,
+        )
     }
 }
