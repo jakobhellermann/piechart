@@ -30,6 +30,7 @@ pub struct Chart {
     radius: u16,
     aspect_ratio: u16,
     legend: bool,
+    total: bool,
 }
 impl Default for Chart {
     fn default() -> Self {
@@ -37,6 +38,7 @@ impl Default for Chart {
             radius: 8,
             aspect_ratio: 3,
             legend: false,
+            total: false,
         }
     }
 }
@@ -72,6 +74,12 @@ impl Chart {
     /// Specifies whether the chart should render a legend with the labels and their percentages.
     pub fn legend(&mut self, legend: bool) -> &mut Self {
         self.legend = legend;
+        self
+    }
+
+    /// Specifies whether the chart should show a total sum of data values in its legend
+    pub fn total(&mut self, total: bool) -> &mut Self {
+        self.total = total;
         self
     }
 }
@@ -135,15 +143,19 @@ impl Chart {
             if self.legend {
                 output.push_str(&" ".repeat(padding_len + LABEL_PADDING));
 
-                let max_label_idx = (data.len() - 1) as i32;
+                let max_label_idx = data.len() as i32;
 
                 let mut iter = (0..=max_label_idx)
                     .map(|x| x * 2) // space between labels
                     .map(|x| x - max_label_idx); // center at y=0
 
                 if let Some(idx) = iter.position(|i| i == y) {
-                    let item = &data[idx];
-                    output.push_str(&item.format_label(total));
+                    if let Some(item) = data.get(idx) {
+                        output.push_str(&item.format_label(total));
+                    } else if self.total {
+                        let total : f32 = data.iter().map(|d| d.value).sum();
+                        output.push_str(&format!("Total: {}", total));
+                    }
                 }
             }
 
